@@ -3,13 +3,33 @@ class DeminHex {
     constructor(height, width) {
         this.height = height;
         this.width = width;
+        this.aCells = [];
+        this.aCellsPatern = [];
+        this.aPatern=[3, 2, 3, 4];
+    }
+
+    setup(){
+        this.initCells();
+        this.initGridLayout();
+    }
+
+     initCells(params) {
+        const aPattern = this.aPatern;
+        this.aCellsPatern = [];
+        for (let i = 0; i < aPattern.length; i++) {
+            this.aCellsPatern.push([]);
+            for (let j = 0; j < aPattern[i]; j++) {
+                let cell= new Cell(i,j);
+                this.aCells.push(cell);
+                this.aCellsPatern[i].push(cell);
+            }
+        }
     }
 
 
-
-    static initGridLayout(params) {
+    initGridLayout(params) {
         const container = document.querySelector('.container');
-        const hexagonPattern = [3, 2, 3, 4];
+        const hexagonPattern = this.aPatern;
 
         for (let i = 0; i < hexagonPattern.length; i++) {
             const row = document.createElement('div');
@@ -21,7 +41,7 @@ class DeminHex {
                 console.log(hexagon.attributes.id);
                 const eSpan = document.createElement('p');
                 eSpan.classList.add('text');
-                eSpan.innerHTML = "swdddddds";
+                eSpan.innerHTML = hexagon.attributes.id;
 
                 hexagon.appendChild(eSpan);
                 row.appendChild(hexagon);
@@ -29,11 +49,6 @@ class DeminHex {
             container.appendChild(row);
         }
     }
-
-
     initGridArray(params) {
-
-
     }
-
 }
