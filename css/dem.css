@@ -19,7 +19,6 @@
 
 .hexagon {
     position: relative;
-
     display: inline-block;
     box-shadow: 10px 10px 5px #000;
     width: 100px;
@@ -30,8 +29,8 @@
     margin: 2px;
 }
 
-.hexagon:hover {
-    background: red;
+.hexajgon:hover {
+    background: #ffa500;
     transform: rotateY(-180deg);
     transition: .7s;
 }
@@ -44,12 +43,18 @@
 
 .text {
     display: inline-block;
-
     position:absolute;
     top: 25px;
-
-
     z-index: 1000;
     width: 100%;
     text-align: center;
 }
+
+.not-selectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
