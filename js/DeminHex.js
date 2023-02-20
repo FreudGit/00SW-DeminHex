@@ -82,12 +82,92 @@ class DeminHex {
         let cellw = this.aCellsPatern[aPoint[0]][aPoint[1]];
         if (cellw.bBomb == true) {
             evt.currentTarget.style.background = '#ff0000';
-            evt.currentTarget.style.fontSize='24px';
-            evt.currentTarget.firstElementChild.innerText='💣'
-            
-        }else{
+            evt.currentTarget.style.fontSize = '24px';
+            evt.currentTarget.firstElementChild.innerText = '💣';
+
+        } else {
             evt.currentTarget.style.background = '#eee';
         }
         console.log(cellw);
-    };
+        console.log(this.getCellsNearCell(cellw));
+    }
+
+
+
+    checkCellContent(cell, bRecursive) {
+        if (cell.isFree()) {
+            revealCell(cell);
+            cell.isRevealed = true;
+
+        }
+
+
+
+    }
+
+
+    getCellsNearCell(cell) {
+        let cells = [];
+        //cells.push(null);
+
+        var ab = this.aCellsPatern?[cell.iRow - 1][cell.iCol - 1] ;
+
+
+/*
+        cells.push(this.aCellsPatern[cell.iRow - 1][cell.iCol  -1]);
+        cells.push(this.aCellsPatern[cell.iRow -1][cell.iCol ]);
+        cells.push(this.aCellsPatern[cell.iRow - 1][cell.iCol +1]);
+
+        cells.push(this.aCellsPatern[cell.iRow ][cell.iCol - 1]);
+        cells.push(this.aCellsPatern[cell.iRow ][cell.iCol + 1]);
+
+        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol - 1]);
+        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol ]);
+        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol + 1]);
+
+
+
+        cells.filter(!undefined);
+*/
+
+        var a = this.aCellsPatern[cell.iRow - 1][ cell.iCol - 1])  ? "" : "not exists";
+        a = this.aCellsPatern[cell.iRow1 - 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow1 - 1][ cell.iCol]) : "not exists";
+        a = this.aCellsPatern[cell.iRow1 - 1][ cell.iCol + 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        a = this.aCellsPatern[cell.iRow - 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+
+        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol - 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol + 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        return cells;
+
+
+    }
+
+
+    revealCell(cell) {
+        //let cellw = this.aCellsPatern[aPoint[0]][aPoint[1]];
+        eCell = getHTMLReference(cell)
+        if (cellw.bBomb == true) {
+            evt.currentTarget.style.background = '#ff0000';
+            evt.currentTarget.style.fontSize = '24px';
+            evt.currentTarget.firstElementChild.innerText = '💣';
+
+        } else {
+            evt.currentTarget.style.background = '#eee';
+        }
+    }
+
+    revealCells(cell) {
+
+        if (!cell.isRevealed) {
+            let iRow = cell.iRow;
+            let iCol = cell.iCol;
+
+
+        }
+
+
+    }
 }
+
