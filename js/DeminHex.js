@@ -5,7 +5,7 @@ class DeminHex {
         this.width = width;
         this.aCells = [];
         this.aCellsPatern = [];
-        this.aPatern = [3, 2, 3, 4];
+        this.aPatern = [3, 4, 3, 4];
         this.settings_MinesCount = 3;
     }
 
@@ -93,55 +93,34 @@ class DeminHex {
     }
 
 
-
     checkCellContent(cell, bRecursive) {
         if (cell.isFree()) {
             revealCell(cell);
             cell.isRevealed = true;
 
         }
-
-
-
     }
 
 
     getCellsNearCell(cell) {
         let cells = [];
         //cells.push(null);
+        cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol]);
+        cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1]);
 
-        var ab = this.aCellsPatern?[cell.iRow - 1][cell.iCol - 1] ;
+        cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1]);
 
+        cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol]);
+        cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol + 1]);
 
-/*
-        cells.push(this.aCellsPatern[cell.iRow - 1][cell.iCol  -1]);
-        cells.push(this.aCellsPatern[cell.iRow -1][cell.iCol ]);
-        cells.push(this.aCellsPatern[cell.iRow - 1][cell.iCol +1]);
-
-        cells.push(this.aCellsPatern[cell.iRow ][cell.iCol - 1]);
-        cells.push(this.aCellsPatern[cell.iRow ][cell.iCol + 1]);
-
-        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol - 1]);
-        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol ]);
-        cells.push(this.aCellsPatern[cell.iRow + 1][cell.iCol + 1]);
-
-
-
-        cells.filter(!undefined);
-*/
-
-        var a = this.aCellsPatern[cell.iRow - 1][ cell.iCol - 1])  ? "" : "not exists";
-        a = this.aCellsPatern[cell.iRow1 - 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow1 - 1][ cell.iCol]) : "not exists";
-        a = this.aCellsPatern[cell.iRow1 - 1][ cell.iCol + 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
-        a = this.aCellsPatern[cell.iRow - 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
-        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
-
-        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol - 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
-        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
-        a = this.aCellsPatern[cell.iRow + 1][ cell.iCol + 1] !== undefined ? cells.push(this.aCellsPatern[cell.iRow + 1, cell.iCol]) : "not exists";
+        cells = cells.filter(function (element) {
+            return element !== undefined;
+        });
+        console.log(cells);
         return cells;
-
-
     }
 
 
@@ -158,16 +137,15 @@ class DeminHex {
         }
     }
 
-    revealCells(cell) {
-
-        if (!cell.isRevealed) {
-            let iRow = cell.iRow;
-            let iCol = cell.iCol;
-
-
-        }
+    revealCells(cells) {
+        cells.forEach(cell => {
+            if (!cell.isRevealed) {
+                let iRow = cell.iRow;
+                let iCol = cell.iCol;
 
 
+            }
+        });
     }
 }
 
