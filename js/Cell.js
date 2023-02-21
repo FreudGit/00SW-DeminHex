@@ -11,21 +11,22 @@ class Cell {
     bLocked = false;
 
     getHTMLReference() {
-        let eElement = document.getElementById(`${this.iRow} ${this.iCol}`);
+        let eElement = document.getElementById(`${this.iRow}_${this.iCol}`);
+        console.log("hhh" + eElement)
         return eElement;
     }
 
     isReavealed() {
-        return bRevealed == false
+        return this.bRevealed == false
     }
 
     isBomb() {
-        return bBomb == false
+        return this.bBomb == false
     }
 
 
     isFree() {
-        if (this.isRevealed()) {
+        if (this.isRevealed) {
             return false;
         } else if (this.isBomb()) {
             return false;

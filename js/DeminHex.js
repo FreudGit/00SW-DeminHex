@@ -38,19 +38,19 @@ class DeminHex {
             for (let j = 0; j < hexagonPattern[i]; j++) {
                 const hexagon = document.createElement('div');
                 hexagon.classList.add('hexagon');
-                hexagon.attributes.id = `${i} ${j}`;
+                hexagon.id = `${i}_${j}`;
+                //hexagon.id = `bobo`;
                 hexagon.addEventListener('click', this.clickOnCell.bind(this));
-
                 console.log(hexagon.attributes.id);
                 const eSpan = document.createElement('p');
                 eSpan.classList.add('text');
                 eSpan.classList.add('not-selectable');
-
-                eSpan.innerHTML = hexagon.attributes.id;
+                eSpan.innerHTML = hexagon.id;
                 hexagon.appendChild(eSpan);
                 row.appendChild(hexagon);
             }
             container.appendChild(row);
+
         }
     }
     initGridArray(params) {
@@ -74,37 +74,29 @@ class DeminHex {
     clickOnCell(evt) {
         // target pointe sur les enfants, currenttarget est parfait
         console.log('clickOnCell' + evt.currentTarget.attributes.id);
-        let sID = evt.currentTarget.attributes.id;
-        let aPoint = sID.split(' ').map(Number);
-
-        let cell = this.aCellsPatern[0];
-        console.log(aPoint);
-        let cellw = this.aCellsPatern[aPoint[0]][aPoint[1]];
-        if (cellw.bBomb == true) {
-            evt.currentTarget.style.background = '#ff0000';
-            evt.currentTarget.style.fontSize = '24px';
-            evt.currentTarget.firstElementChild.innerText = '💣';
-
-        } else {
-            evt.currentTarget.style.background = '#eee';
-        }
-        console.log(cellw);
-        console.log(this.getCellsNearCell(cellw));
+        let sID = evt.currentTarget.id;
+        let aPoint = sID.split('_').map(Number);
+        let cell = this.aCellsPatern[aPoint[0]][aPoint[1]];
+        //let cell = this.aCellsPatern[0];
+        this.checkCellContent(cell)
+        console.log(cell);
+        console.log(this.getCellsNearCell(cell));
     }
-
 
     checkCellContent(cell, bRecursive) {
-        if (cell.isFree()) {
-            revealCell(cell);
+        if (!cell.isFree()) {
+            console.log("bb");
+            this.revealCell(cell);
             cell.isRevealed = true;
-
+            let aCells=this.getCellsNearCellSquare(cell);
+            this.revealCells(aCells);
         }
     }
 
-
-    getCellsNearCell(cell) {
+    getCellsNearCellSquare(cell) {
         let cells = [];
         //cells.push(null);
+        
         cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol - 1]);
         cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol]);
         cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1]);
@@ -124,26 +116,60 @@ class DeminHex {
     }
 
 
-    revealCell(cell) {
-        //let cellw = this.aCellsPatern[aPoint[0]][aPoint[1]];
-        eCell = getHTMLReference(cell)
-        if (cellw.bBomb == true) {
-            evt.currentTarget.style.background = '#ff0000';
-            evt.currentTarget.style.fontSize = '24px';
-            evt.currentTarget.firstElementChild.innerText = '💣';
+    getCellsNearCell(cell) {
 
+        let cells = [];
+        console.log("getCellsNearCell");
+        let icol = cell.iCol - 1;//(cell.iRow%2 == 0);
+        console.log(icol);
+
+        //cells.push(null);
+        cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol]);
+        //cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1]);
+
+        cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1]);
+
+        cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol - 1]);
+        cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol]);
+        //cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol + 1]);
+
+        cells = cells.filter(function (element) {
+            return element !== undefined;
+        });
+        console.log(cells);
+        return cells;
+    }
+
+
+    getHTMLReference() {
+        let eElement = document.getElementById(`${this.iRow} ${this.iCol}`);
+        console.log("hhh" + eElement)
+        return eElement;
+    }
+
+
+    revealCell(cell) {
+        let eCell = cell.getHTMLReference();
+        console.log('ssw' + eCell);
+        if (cell.bBomb == true) {
+            eCell.style.background = '#ff0000';
+            eCell.style.fontSize = '24px';
+            eCell.firstElementChild.innerText = '💣';
         } else {
-            evt.currentTarget.style.background = '#eee';
+            eCell.style.background = '#eee';
         }
     }
 
     revealCells(cells) {
+        console.log(cells);
         cells.forEach(cell => {
             if (!cell.isRevealed) {
                 let iRow = cell.iRow;
                 let iCol = cell.iCol;
-
-
+                cell.getHTMLReference().style.background = '#0000';
+                this.revealCell(cell);
             }
         });
     }
