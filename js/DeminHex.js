@@ -72,13 +72,13 @@ class DeminHex {
   initCells_Flags () {
     this.aCells.forEach(element => {
       if (element.bBomb == true) {
-            let aCellsNear=this.getCellsNearCell(element);
-            this.aCells.forEach(cellNear => {
-                cellNear.iBombNear++;
-            })
+        console.log(element)
+        let aCellsNear = this.getCellsNearCell(element)
+        aCellsNear.forEach(cellNear => {
+          cellNear.iBombNear++
+        })
       }
     })
-
   }
 
   clickOnCell (evt) {
@@ -87,37 +87,29 @@ class DeminHex {
     let sID = evt.currentTarget.id
     let aPoint = sID.split('_').map(Number)
     let cell = this.aCellsPatern[aPoint[0]][aPoint[1]]
-    //let cell = this.aCellsPatern[0];
     this.checkCellContent(cell)
-    //console.log(cell)
-    console.log(this.getCellsNearCell(cell))
   }
 
   checkCellContent (cell, bRecursive) {
-    if (!cell.isFree()) {
-      console.log('bb')
-      this.revealCell(cell)
-      cell.isRevealed = true
-      let aCells = this.getCellsNearCell(cell)
-      this.revealCells(aCells)
+    console.log(cell)
+
+    if (cell.isFree()) {
+      this.revealCell(cell, true)
+    } else if (cell.isBomb()) {
+      this.revealCell(cell, false)
     }
   }
 
   getCellsNearCellSquare (cell) {
     let cells = []
-    //cells.push(null);
-
     cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol - 1])
     cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol])
     cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1])
-
     cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1])
     cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1])
-
     cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol - 1])
     cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol])
     cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol + 1])
-
     cells = cells.filter(function (element) {
       return element !== undefined
     })
@@ -127,9 +119,7 @@ class DeminHex {
 
   getCellsNearCell (cell) {
     let cells = []
-    //console.log('getCellsNearCell')
     let icol = cell.iCol + (cell.iRow % 2 == 0)
-
     cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol - 1])
     cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol])
     cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1])
@@ -146,30 +136,36 @@ class DeminHex {
 
   getHTMLReference () {
     let eElement = document.getElementById(`${this.iRow} ${this.iCol}`)
-    console.log('hhh' + eElement)
     return eElement
   }
 
-  revealCell (cell) {
+  revealCell (cell, bRecurSive) {
     let eCell = cell.getHTMLReference()
-    //console.log('ssw' + eCell)
+    //console.log(eCell)
+    cell.isRevealed = true
     if (cell.bBomb == true) {
       eCell.style.background = '#ff0000'
       eCell.style.fontSize = '24px'
       eCell.firstElementChild.innerText = '💣'
     } else {
       eCell.style.background = '#eee'
+      eCell.firstChild.innerText = cell.iBombNear
+      if (bRecurSive) {
+        if (cell.acceptRecursive()) {
+          let aCells = this.getCellsNearCell(cell)
+          this.revealCells(aCells, bRecurSive)
+        }
+      }
     }
   }
 
-  revealCells (cells) {
-    //console.log(cells)
+  revealCells (cells, bRecurSive) {
     cells.forEach(cell => {
       if (!cell.isRevealed) {
         let iRow = cell.iRow
         let iCol = cell.iCol
         cell.getHTMLReference().style.background = '#0000'
-        this.revealCell(cell)
+        this.revealCell(cell, bRecurSive)
       }
     })
   }
