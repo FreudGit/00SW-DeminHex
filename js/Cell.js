@@ -9,6 +9,7 @@ class Cell {
     bBomb = false;
     bRevealed = false;
     bLocked = false;
+    iBombNear=0;
 
     getHTMLReference() {
         let eElement = document.getElementById(`${this.iRow}_${this.iCol}`);
