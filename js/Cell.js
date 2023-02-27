@@ -1,5 +1,5 @@
 class Cell {
-  constructor (iRow, iCol) {
+  constructor(iRow, iCol) {
     this.iRow = iRow
     this.iCol = iCol
   }
@@ -8,22 +8,28 @@ class Cell {
   bRevealed = false
   bLocked = false
   iBombNear = 0
+  iFlag = 0
 
-  getHTMLReference () {
+  getHTMLReference() {
     let eElement = document.getElementById(`${this.iRow}_${this.iCol}`)
     console.log('hhh' + eElement)
     return eElement
   }
 
-  isReavealed () {
+  isReavealed() {
     return this.bRevealed == false;
   }
 
-  isBomb () {
+  isBomb() {
     return this.bBomb == true;
   }
 
-  isFree () {
+  isFlag() {
+    return this.iFlag != 0;
+  }
+
+
+  isFree() {
     if (this.isRevealed) {
       return false
     } else if (this.isBomb()) {
@@ -33,9 +39,33 @@ class Cell {
     }
   }
 
-  acceptRecursive () {
+  acceptRecursive() {
     let bOK = this.bBomb == false && this.iBombNear == 0
     return bOK
   }
-  revealFlags () {}
+
+
+  revealFlag(bRotative) {
+
+    if (bRotative) {
+      this.iFlag++;
+      if (this.iFlag > 2) this.iFlag = 0;
+
+    }
+
+    
+    let eCell = this.getHTMLReference()
+    console.log(eCell)
+    if (this.iFlag == 0) {
+      eCell.firstElementChild.innerText = ''
+    }else if (this.iFlag == 1) {
+      eCell.firstElementChild.innerText = '⚑'
+      eCell.style.background = 'orange'
+    }else if (this.iFlag == 2) {
+      eCell.firstElementChild.innerText = '?'
+      eCell.style.background = 'orange'
+    }
+  }
+
+  
 }
