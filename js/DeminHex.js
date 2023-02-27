@@ -44,13 +44,10 @@ class DeminHex {
         //hexagon.id = `bobo`;
         hexagon.addEventListener('click', this.clickOnCell.bind(this))
         hexagon.addEventListener('contextmenu', this.rightclickOnCell.bind(this))
-
-
-        //console.log(hexagon.attributes.id)
         const eSpan = document.createElement('p')
         eSpan.classList.add('text')
         eSpan.classList.add('not-selectable')
-        eSpan.innerHTML = hexagon.id
+        //eSpan.innerHTML = hexagon.id
         hexagon.appendChild(eSpan)
         row.appendChild(hexagon)
       }
@@ -116,14 +113,11 @@ class DeminHex {
     let aPoint = sID.split('_').map(Number)
     let cell = this.aCellsPatern[aPoint[0]][aPoint[1]]
     return cell
-
   }
 
 
 
   checkCellContent(cell, bRecursive) {
-    console.log("cell")
-
     if (cell.isFree()) {
       this.revealCell(cell, true)
     } else if (cell.isBomb()) {
