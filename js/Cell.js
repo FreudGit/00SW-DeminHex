@@ -12,7 +12,7 @@ class Cell {
 
   getHTMLReference() {
     let eElement = document.getElementById(`${this.iRow}_${this.iCol}`)
-    console.log('hhh' + eElement)
+    //console.log('getHTMLReference' + eElement)
     return eElement
   }
 

@@ -9,26 +9,31 @@ class DeminHex {
     this.tProgress = 0;
     this.tNbMines = 0;
     this.iAlertDelay = 500;
-    this.btnNewGame=0;
-
+    this.btnNewGame = 0;
+    this.LOGS = false;
   }
 
   setup() {
     this.initGlobals();
     this.reset();
-    this.showMinesNumber() 
+    this.showMinesNumber();
     this.initCells();
     this.initCells_Mines();
     this.initCells_Flags();
     this.initGridLayout();
-    this.showRemainings() ;
+    this.showRemainings();
   }
 
   reset() {
     this.aCells = [];
     this.aCellsPatern = [];
-    const aPatternRamdom= Math.floor(Math.random() * 5) + 3;
-    this.aPatern = [aPatternRamdom, aPatternRamdom+1, aPatternRamdom, aPatternRamdom+1];
+    const aPatternRamdom = Math.floor(Math.random() * 5) + 3;
+    this.aPatern = [
+      aPatternRamdom,
+      aPatternRamdom + 1,
+      aPatternRamdom,
+      aPatternRamdom + 1,
+    ];
 
     //this.aPatern = [3, 4, 3, 4];
     this.settings_MinesCount = aPatternRamdom;
@@ -59,7 +64,6 @@ class DeminHex {
         const hexagon = document.createElement("div");
         hexagon.classList.add("hexagon");
         hexagon.id = `${i}_${j}`;
-        //hexagon.id = `bobo`;
         hexagon.addEventListener("click", this.clickOnCell.bind(this));
         hexagon.addEventListener(
           "contextmenu",
@@ -68,7 +72,6 @@ class DeminHex {
         const eSpan = document.createElement("p");
         eSpan.classList.add("text");
         eSpan.classList.add("not-selectable");
-        //eSpan.innerHTML = hexagon.id
         hexagon.appendChild(eSpan);
         row.appendChild(hexagon);
       }
@@ -88,22 +91,18 @@ class DeminHex {
   initCells_Mines(params) {
     let iMines = 0;
     while (iMines < this.settings_MinesCount) {
-      // FH REmoved as i'll use linear array
-      //var iRow = Math.floor(Math.random() * this.options.rows);
-      //var iCol = Math.floor(Math.random() * this.options.cols);
       var iRand = Math.floor(Math.random() * this.aCells.length);
       if (this.aCells[iRand].bBomb == false) {
         this.aCells[iRand].bBomb = true;
         iMines++;
       }
-      //console.log(this.aCells)
+      if (this.LOGS) console.log('initCells_Mines', this.aCells)
     }
   }
 
   initCells_Flags() {
     this.aCells.forEach((element) => {
       if (element.bBomb == true) {
-        console.log(element);
         let aCellsNear = this.getCellsNearCell(element);
         aCellsNear.forEach((cellNear) => {
           cellNear.iBombNear++;
@@ -113,22 +112,17 @@ class DeminHex {
   }
 
   clickOnCell(evt) {
-    // target pointe sur les enfants, currenttarget est parfait
-    console.log("clickOnCell" + evt.currentTarget.attributes.id);
+    if (this.LOGS) console.log("clickOnCell" + evt.currentTarget.attributes.id);
     let sID = evt.currentTarget.id;
     let cell = this.getCellFromId(sID);
     this.checkCellContent(cell);
     this.showRemainings();
-    // add a timeout to check if win (5 seconds)
-    
-    //setTimeout(_.bind(this.checkIfWin, this), 1000);
-
-    setTimeout(this.checkIfWin.bind(this),  this.iAlertDelay);
+    setTimeout(this.checkIfWin.bind(this), this.iAlertDelay);
   }
 
   rightclickOnCell(evt) {
     evt.preventDefault();
-    console.log("rightclickOnCell" + evt.currentTarget.attributes.id);
+    if (this.LOGS) console.log("rightclickOnCell" + evt.currentTarget.attributes.id);
     let sID = evt.currentTarget.id;
     let cell = this.getCellFromId(sID);
     this.revealCellFlag(cell, true);
@@ -145,8 +139,7 @@ class DeminHex {
       this.revealCell(cell, true);
     } else if (cell.isBomb()) {
       this.revealCell(cell, false);
-      setTimeout(this.gameOver.bind(this),  this.iAlertDelay);
-     
+      setTimeout(this.gameOver.bind(this), this.iAlertDelay);
     }
   }
 
@@ -155,7 +148,6 @@ class DeminHex {
     if (res == true) {
       this.setup();
     } else {
-      
     }
   }
 
@@ -172,7 +164,7 @@ class DeminHex {
     cells = cells.filter(function (element) {
       return element !== undefined;
     });
-    console.log(cells);
+    if (this.LOGS) console.log('getCellsNearCellSquare', cells);
     return cells;
   }
 
@@ -189,7 +181,7 @@ class DeminHex {
     cells = cells.filter(function (element) {
       return element !== undefined;
     });
-    console.log(cells);
+    if (this.LOGS) console.log("getCellsNearCell", cells);
     return cells;
   }
 
@@ -239,36 +231,24 @@ class DeminHex {
 
   showRemainings() {
     let cells = this.getRemainings(this.aCells);
-    console.log("ssss" + cells);
-    console.log(cells);
+    if (this.LOGS) console.log("showRemainings" + cells);
     this.tProgress.innerText =
-    "Cellules déminées: " + cells.length + "/" + (this.aCells.length - this.settings_MinesCount);
+      "Cellules déminées: " +
+      cells.length +
+      "/" +
+      (this.aCells.length - this.settings_MinesCount);
   }
 
   showMinesNumber() {
     let cells = this.getRemainings(this.aCells);
-    console.log("ssss" + cells);
-    console.log(cells);
+    if (this.LOGS) console.log("showMinesNumber" + cells);
     this.tNbMines.innerText = "Nombre de mines: " + this.settings_MinesCount;
   }
 
-
-
-
-
   checkIfWin() {
-    //if (condition) {
     let cells = this.getRemainings(this.aCells);
     if (cells.length == this.aCells.length - this.settings_MinesCount) {
       alert("Vous avez gagné!");
     }
   }
-
-
-  testAlert() {
- 
-      alert("Vous avez gagné!");
-
-  }
-  //}
 }
