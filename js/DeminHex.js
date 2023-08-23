@@ -1,179 +1,213 @@
 class DeminHex {
   constructor(height, width) {
-    this.height = height
-    this.width = width
-    this.aCells = []
-    this.aCellsPatern = []
-    this.aPatern = [3, 4, 3, 4]
+    this.height = height;
+    this.width = width;
+    this.aCells = [];
+    this.aCellsPatern = [];
+    this.aPatern = [3, 4, 3, 4];
     this.settings_MinesCount = 3;
     this.tProgress = 0;
+    this.tNbMines = 0;
+    this.iAlertDelay = 500;
+    this.btnNewGame=0;
+
   }
 
   setup() {
     this.initGlobals();
+    this.reset();
+    this.showMinesNumber() 
     this.initCells();
     this.initCells_Mines();
     this.initCells_Flags();
     this.initGridLayout();
+    this.showRemainings() ;
+  }
+
+  reset() {
+    this.aCells = [];
+    this.aCellsPatern = [];
+    const aPatternRamdom= Math.floor(Math.random() * 5) + 3;
+    this.aPatern = [aPatternRamdom, aPatternRamdom+1, aPatternRamdom, aPatternRamdom+1];
+
+    //this.aPatern = [3, 4, 3, 4];
+    this.settings_MinesCount = aPatternRamdom;
   }
 
   initCells(params) {
-    const aPattern = this.aPatern
-    this.aCellsPatern = []
+    const aPattern = this.aPatern;
+    this.aCellsPatern = [];
     for (let i = 0; i < aPattern.length; i++) {
-      this.aCellsPatern.push([])
+      this.aCellsPatern.push([]);
       for (let j = 0; j < aPattern[i]; j++) {
-        let cell = new Cell(i, j)
-        this.aCells.push(cell)
-        this.aCellsPatern[i].push(cell)
+        let cell = new Cell(i, j);
+        this.aCells.push(cell);
+        this.aCellsPatern[i].push(cell);
       }
     }
   }
 
   initGridLayout(params) {
-    const container = document.querySelector('.container')
-    const hexagonPattern = this.aPatern
+    const container = document.querySelector(".container");
+    container.innerHTML = "";
+    const hexagonPattern = this.aPatern;
 
     for (let i = 0; i < hexagonPattern.length; i++) {
-      const row = document.createElement('div')
-      row.classList.add('row')
+      const row = document.createElement("div");
+      row.classList.add("row");
       for (let j = 0; j < hexagonPattern[i]; j++) {
-        const hexagon = document.createElement('div')
-        hexagon.classList.add('hexagon')
-        hexagon.id = `${i}_${j}`
+        const hexagon = document.createElement("div");
+        hexagon.classList.add("hexagon");
+        hexagon.id = `${i}_${j}`;
         //hexagon.id = `bobo`;
-        hexagon.addEventListener('click', this.clickOnCell.bind(this))
-        hexagon.addEventListener('contextmenu', this.rightclickOnCell.bind(this))
-        const eSpan = document.createElement('p')
-        eSpan.classList.add('text')
-        eSpan.classList.add('not-selectable')
+        hexagon.addEventListener("click", this.clickOnCell.bind(this));
+        hexagon.addEventListener(
+          "contextmenu",
+          this.rightclickOnCell.bind(this)
+        );
+        const eSpan = document.createElement("p");
+        eSpan.classList.add("text");
+        eSpan.classList.add("not-selectable");
         //eSpan.innerHTML = hexagon.id
-        hexagon.appendChild(eSpan)
-        row.appendChild(hexagon)
+        hexagon.appendChild(eSpan);
+        row.appendChild(hexagon);
       }
-      container.appendChild(row)
+      container.appendChild(row);
     }
   }
 
   initGlobals(params) {
     this.tProgress = document.getElementById(`progress`);
-
-
+    this.tNbMines = document.getElementById(`nbMines`);
+    this.btnNewGame = document.getElementById(`btnNewGame`);
+    this.btnNewGame.addEventListener("click", this.setup.bind(this));
   }
 
-  initGridArray(params) { }
+  initGridArray(params) {}
 
   initCells_Mines(params) {
-    let iMines = 0
+    let iMines = 0;
     while (iMines < this.settings_MinesCount) {
       // FH REmoved as i'll use linear array
       //var iRow = Math.floor(Math.random() * this.options.rows);
       //var iCol = Math.floor(Math.random() * this.options.cols);
-      var iRand = Math.floor(Math.random() * this.aCells.length)
+      var iRand = Math.floor(Math.random() * this.aCells.length);
       if (this.aCells[iRand].bBomb == false) {
-        this.aCells[iRand].bBomb = true
-        iMines++
+        this.aCells[iRand].bBomb = true;
+        iMines++;
       }
       //console.log(this.aCells)
     }
   }
 
   initCells_Flags() {
-    this.aCells.forEach(element => {
+    this.aCells.forEach((element) => {
       if (element.bBomb == true) {
-        console.log(element)
-        let aCellsNear = this.getCellsNearCell(element)
-        aCellsNear.forEach(cellNear => {
-          cellNear.iBombNear++
-        })
+        console.log(element);
+        let aCellsNear = this.getCellsNearCell(element);
+        aCellsNear.forEach((cellNear) => {
+          cellNear.iBombNear++;
+        });
       }
-    })
+    });
   }
 
   clickOnCell(evt) {
     // target pointe sur les enfants, currenttarget est parfait
-    console.log('clickOnCell' + evt.currentTarget.attributes.id)
-    let sID = evt.currentTarget.id
-    let cell = this.getCellFromId(sID)
-    this.checkCellContent(cell)
-    this.showRemainings()
-    setTimeout(this.checkIfWin(), 5000);
+    console.log("clickOnCell" + evt.currentTarget.attributes.id);
+    let sID = evt.currentTarget.id;
+    let cell = this.getCellFromId(sID);
+    this.checkCellContent(cell);
+    this.showRemainings();
+    // add a timeout to check if win (5 seconds)
+    
+    //setTimeout(_.bind(this.checkIfWin, this), 1000);
 
+    setTimeout(this.checkIfWin.bind(this),  this.iAlertDelay);
   }
 
   rightclickOnCell(evt) {
     evt.preventDefault();
-    console.log('rightclickOnCell' + evt.currentTarget.attributes.id)
-    let sID = evt.currentTarget.id
-    let cell = this.getCellFromId(sID)
-    this.revealCellFlag(cell, true)
+    console.log("rightclickOnCell" + evt.currentTarget.attributes.id);
+    let sID = evt.currentTarget.id;
+    let cell = this.getCellFromId(sID);
+    this.revealCellFlag(cell, true);
   }
 
   getCellFromId(sID) {
-    let aPoint = sID.split('_').map(Number)
-    let cell = this.aCellsPatern[aPoint[0]][aPoint[1]]
-    return cell
+    let aPoint = sID.split("_").map(Number);
+    let cell = this.aCellsPatern[aPoint[0]][aPoint[1]];
+    return cell;
   }
-
-
 
   checkCellContent(cell, bRecursive) {
     if (cell.isFree()) {
-      this.revealCell(cell, true)
+      this.revealCell(cell, true);
     } else if (cell.isBomb()) {
-      this.revealCell(cell, false)
+      this.revealCell(cell, false);
+      setTimeout(this.gameOver.bind(this),  this.iAlertDelay);
+     
+    }
+  }
+
+  gameOver() {
+    var res = confirm("Game Over! Want to retry?");
+    if (res == true) {
+      this.setup();
+    } else {
+      
     }
   }
 
   getCellsNearCellSquare(cell) {
-    let cells = []
-    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol])
-    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1])
-    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1])
-    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol])
-    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol + 1])
+    let cells = [];
+    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol]);
+    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[cell.iCol + 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol]);
+    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[cell.iCol + 1]);
     cells = cells.filter(function (element) {
-      return element !== undefined
-    })
-    console.log(cells)
-    return cells
+      return element !== undefined;
+    });
+    console.log(cells);
+    return cells;
   }
 
   getCellsNearCell(cell) {
-    let cells = []
-    let icol = cell.iCol + (cell.iRow % 2 == 0)
-    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol])
-    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1])
-    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol - 1])
-    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol])
+    let cells = [];
+    let icol = cell.iCol + (cell.iRow % 2 == 0);
+    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow - 1]?.[icol]);
+    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow]?.[cell.iCol + 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol - 1]);
+    cells.push(this.aCellsPatern?.[cell.iRow + 1]?.[icol]);
 
     cells = cells.filter(function (element) {
-      return element !== undefined
-    })
-    console.log(cells)
-    return cells
+      return element !== undefined;
+    });
+    console.log(cells);
+    return cells;
   }
 
   revealCell(cell, bRecurSive) {
-    let eCell = cell.getHTMLReference()
+    let eCell = cell.getHTMLReference();
     //console.log(eCell)
-    cell.isRevealed = true
+    cell.isRevealed = true;
     if (cell.bBomb == true) {
-      eCell.style.background = '#ff0000'
-      eCell.style.fontSize = '24px'
-      eCell.firstElementChild.innerText = '💣'
+      eCell.style.background = "#ff0000";
+      eCell.style.fontSize = "24px";
+      eCell.firstElementChild.innerText = "💣";
     } else {
-      eCell.style.background = '#eee'
-      eCell.firstChild.innerText = cell.iBombNear
+      eCell.style.background = "#eee";
+      eCell.firstChild.innerText = cell.iBombNear;
       if (bRecurSive) {
         if (cell.acceptRecursive()) {
-          let aCells = this.getCellsNearCell(cell)
-          this.revealCells(aCells, bRecurSive)
+          let aCells = this.getCellsNearCell(cell);
+          this.revealCells(aCells, bRecurSive);
         }
       }
     }
@@ -181,41 +215,60 @@ class DeminHex {
 
   revealCellFlag(cell, bRotative) {
     if (!cell.isRevealed) {
-      cell.revealFlag(true)
+      cell.revealFlag(true);
     }
   }
 
   revealCells(cells, bRecurSive) {
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
       if (!cell.isRevealed) {
-        let iRow = cell.iRow
-        let iCol = cell.iCol
-        cell.getHTMLReference().style.background = '#0000'
-        this.revealCell(cell, bRecurSive)
+        let iRow = cell.iRow;
+        let iCol = cell.iCol;
+        cell.getHTMLReference().style.background = "#0000";
+        this.revealCell(cell, bRecurSive);
       }
-    })
+    });
   }
 
   getRemainings(cells) {
     var newArray = cells.filter(function (cell) {
-      return cell.isRevealed == true
+      return cell.isRevealed == true;
     });
     return newArray;
   }
 
   showRemainings() {
     let cells = this.getRemainings(this.aCells);
-    console.log('ssss' + cells)
-    console.log(cells)
-    this.tProgress.innerText = cells.length + '/' + (this.aCells.length - this.settings_MinesCount);
+    console.log("ssss" + cells);
+    console.log(cells);
+    this.tProgress.innerText =
+    "Cellules déminées: " + cells.length + "/" + (this.aCells.length - this.settings_MinesCount);
   }
+
+  showMinesNumber() {
+    let cells = this.getRemainings(this.aCells);
+    console.log("ssss" + cells);
+    console.log(cells);
+    this.tNbMines.innerText = "Nombre de mines: " + this.settings_MinesCount;
+  }
+
+
+
+
 
   checkIfWin() {
     //if (condition) {
     let cells = this.getRemainings(this.aCells);
     if (cells.length == this.aCells.length - this.settings_MinesCount) {
-      alert('Yeah!')
+      alert("Vous avez gagné!");
     }
+  }
+
+
+  testAlert() {
+ 
+      alert("Vous avez gagné!");
+
   }
   //}
 }
