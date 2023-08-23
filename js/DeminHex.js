@@ -139,6 +139,8 @@ class DeminHex {
       this.revealCell(cell, true);
     } else if (cell.isBomb()) {
       this.revealCell(cell, false);
+      this.revealCells_Bomb(this.aCells);
+    
       setTimeout(this.gameOver.bind(this), this.iAlertDelay);
     }
   }
@@ -190,9 +192,10 @@ class DeminHex {
     //console.log(eCell)
     cell.isRevealed = true;
     if (cell.bBomb == true) {
-      eCell.style.background = "#ff0000";
-      eCell.style.fontSize = "24px";
-      eCell.firstElementChild.innerText = "💣";
+      cell.revealBomb(false)
+      //eCell.style.background = "#ff0000";
+      //eCell.style.fontSize = "24px";
+      //eCell.firstElementChild.innerText = "💣";
     } else {
       eCell.style.background = "#eee";
       eCell.firstChild.innerText = cell.iBombNear;
@@ -222,6 +225,23 @@ class DeminHex {
     });
   }
 
+
+
+  revealCells_Bomb(cells) {
+    const bombCells = cells.filter(cell => cell.bBomb === true);
+
+    bombCells.forEach((cell) => {
+      if (!cell.isRevealed) {
+        cell.revealBomb(true)
+
+        //cell.getHTMLReference().style.background = "#0000";
+        //this.revealCell(cell, false);
+      }
+    });
+  }
+
+
+
   getRemainings(cells) {
     var newArray = cells.filter(function (cell) {
       return cell.isRevealed == true;
@@ -248,6 +268,7 @@ class DeminHex {
   checkIfWin() {
     let cells = this.getRemainings(this.aCells);
     if (cells.length == this.aCells.length - this.settings_MinesCount) {
+      this.revealCells_Bomb(this.aCells);
       alert("Vous avez gagné!");
     }
   }
