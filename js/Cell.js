@@ -23,8 +23,8 @@ class Cell {
    * Indique si la cellule est révélée
    * @returns boolean true si la cellule est révélée
    */
-  isReavealed() {
-    return this.bRevealed == false;
+  isRevealed() {
+    return this.bRevealed == true;
   }
 
   /**
@@ -48,7 +48,7 @@ class Cell {
    * @returns boolean true si la cellule est 'free'
    */
   isFree() {
-    if (this.isRevealed) {
+    if (this.isRevealed()) {
       return false;
     } else if (this.isBomb()) {
       return false;
@@ -77,7 +77,7 @@ class Cell {
     }
 
     let eCell = this.getHTMLReference();
-    console.log(eCell);
+    //console.log(eCell);
     if (this.iFlag == 0) {
       eCell.firstElementChild.innerText = "";
     } else if (this.iFlag == 1) {
@@ -102,5 +102,23 @@ class Cell {
     }
     eCell.style.fontSize = "24px";
     eCell.firstElementChild.innerText = "💣";
+  }
+
+
+  /**
+   * Afficher les information de l'objet de facon lisible
+   * @returns string Information de l'objet
+   * @example Cell0-0,💣,👓,🔒,⚠1,⚑
+  */
+  toString() {
+    let sInfo= "";
+    sInfo += 'Cell' + this.iRow + "-" + this.iCol + ",";
+    if (this.bBomb) sInfo += "💣"+ ",";
+    if (this.bRevealed) sInfo += "👓"+ ",";
+    if (this.bLocked) sInfo += "🔒"+ ",";
+    if (this.iBombNear > 0) sInfo += "⚠"+ this.iBombNear+ ",";
+    if (this.iFlag > 0) sInfo += "⚑";
+  
+    return sInfo;
   }
 }

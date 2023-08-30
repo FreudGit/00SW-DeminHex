@@ -1,7 +1,5 @@
 class DeminHex {
-  constructor(height, width) {
-    this.height = height;
-    this.width = width;
+  constructor(options = {}) {
     this.aCells = [];
     this.aCellsPatern = [];
     this.aPatern = [3, 4, 3, 4];
@@ -11,11 +9,17 @@ class DeminHex {
     this.iAlertDelay = 500;
     this.btnNewGame = 0;
     this.gameType = ["square", "hexagon"];
-    this.sType =
-      this.gameType[Math.floor(Math.random() * this.gameType.length)];
     this.LOGS = false;
+    this.bRandomize = false;
+    // set options specifiques
+    for (const key in options) {
+      this[key] = options[key];
+    }
   }
 
+  /**
+   * Préparer le jeu
+   */
   setup() {
     this.initGlobals();
     this.reset();
@@ -34,15 +38,18 @@ class DeminHex {
   reset() {
     this.aCells = [];
     this.aCellsPatern = [];
-    const aPatternRamdom = Math.floor(Math.random() * 5) + 3;
-    this.aPatern = [
-      aPatternRamdom,
-      aPatternRamdom + (this.sType == "hexagon"),
-      aPatternRamdom,
-      aPatternRamdom + (this.sType == "hexagon"),
-    ];
-    //this.aPatern = [3, 4, 3, 4];
-    this.settings_MinesCount = aPatternRamdom;
+    if (this.bRandomize) {
+      this.sType =
+        this.gameType[Math.floor(Math.random() * this.gameType.length)];
+      const aPatternRamdom = Math.floor(Math.random() * 5) + 3;
+      this.aPatern = [
+        aPatternRamdom,
+        aPatternRamdom + (this.sType == "hexagon"),
+        aPatternRamdom,
+        aPatternRamdom + (this.sType == "hexagon"),
+      ];
+      this.settings_MinesCount = aPatternRamdom;
+    }
   }
 
   /**
@@ -165,7 +172,7 @@ class DeminHex {
    */
   revealCell(cell, bRecurSive) {
     let eCell = cell.getHTMLReference();
-    cell.isRevealed = true;
+    cell.bRevealed = true;
     if (cell.bBomb == true) {
       cell.revealBomb(false);
     } else {
@@ -185,7 +192,7 @@ class DeminHex {
    * @param {*} cell Cellule référence
    */
   revealCellFlag(cell) {
-    if (!cell.isRevealed) {
+    if (!cell.isRevealed()) {
       cell.revealFlag(true);
     }
   }
@@ -197,7 +204,7 @@ class DeminHex {
    */
   revealCells(cells, bRecurSive) {
     cells.forEach((cell) => {
-      if (!cell.isRevealed) {
+      if (!cell.isRevealed()) {
         let iRow = cell.iRow;
         let iCol = cell.iCol;
         cell.getHTMLReference().style.background = "#0000";
@@ -213,7 +220,7 @@ class DeminHex {
   revealCells_Bomb(cells) {
     const bombCells = cells.filter((cell) => cell.bBomb === true);
     bombCells.forEach((cell) => {
-      if (!cell.isRevealed) {
+      if (!cell.isRevealed()) {
         cell.revealBomb(true);
       }
     });
@@ -225,7 +232,7 @@ class DeminHex {
    */
   getRemainings(cells) {
     var newArray = cells.filter(function (cell) {
-      return cell.isRevealed == true;
+      return cell.isRevealed() == true;
     });
     return newArray;
   }
@@ -342,6 +349,6 @@ class DeminHex {
    * Faciliter le dug en affuchant un array d'information dans la console
    */
   easyDebug() {
-    return this.aCellsPatern.map((row) => row.map((cell) => cell.bBomb));
+    return this.aCellsPatern.map((row) => row.map((cell) => cell.toString()));
   }
 }
