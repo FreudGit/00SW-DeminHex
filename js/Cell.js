@@ -10,24 +10,43 @@ class Cell {
   iBombNear = 0;
   iFlag = 0;
 
+  /**
+   * Récupérer la référence HTML de la cellule(DOM)
+   */
   getHTMLReference() {
     let eElement = document.getElementById(`${this.iRow}_${this.iCol}`);
     //console.log('getHTMLReference' + eElement)
     return eElement;
   }
 
+  /**
+   * Indique si la cellule est révélée
+   * @returns boolean true si la cellule est révélée
+   */
   isReavealed() {
     return this.bRevealed == false;
   }
 
+  /**
+   * Indique si la cellule contient une bombe
+   * @returns boolean true si la cellule contient une bombe
+   */
   isBomb() {
     return this.bBomb == true;
   }
 
+  /**
+   * Indique si la cellule contient un flag
+   * @returns boolean true si la cellule contient une flag
+   */
   isFlag() {
     return this.iFlag != 0;
   }
 
+  /**
+   * Indique si la cellule est 'free' (non révélée et non bombe)
+   * @returns boolean true si la cellule est 'free'
+   */
   isFree() {
     if (this.isRevealed) {
       return false;
@@ -38,11 +57,19 @@ class Cell {
     }
   }
 
+  /**
+   * Indique si le contexte de la cellule est libre
+   * @returns boolean true si le contexte de la cellule est libre
+   */
   acceptRecursive() {
     let bOK = this.bBomb == false && this.iBombNear == 0;
     return bOK;
   }
 
+  /**
+   * Afficher les flags
+   * @param {*} bRotative Switch entre les type de flags
+   */
   revealFlag(bRotative) {
     if (bRotative) {
       this.iFlag++;
@@ -62,11 +89,15 @@ class Cell {
     }
   }
 
-  revealBomb(bCompleted=false) {
+  /**
+   * Afficher les bombes
+   * @param {*} bCompleted Le jeu est terminé
+   */
+  revealBomb(bCompleted = false) {
     let eCell = this.getHTMLReference();
     if (bCompleted) {
-    eCell.style.background = "#FFA500";
-  } else {
+      eCell.style.background = "#FFA500";
+    } else {
       eCell.style.background = "#ff0000";
     }
     eCell.style.fontSize = "24px";
