@@ -80,6 +80,7 @@ class Cell {
     //console.log(eCell);
     if (this.iFlag == 0) {
       eCell.firstElementChild.innerText = "";
+      eCell.style.background = "grey";
     } else if (this.iFlag == 1) {
       eCell.firstElementChild.innerText = "⚑";
       eCell.style.background = "orange";

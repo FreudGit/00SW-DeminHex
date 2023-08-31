@@ -125,17 +125,6 @@ class DeminHex {
   }
 
   /**
-   * Partie Terminée, demander à l'utilisateur s'il veut recommencer
-   */
-  gameOver() {
-    var res = confirm("Vous avez perdu! Voulez-vous recommencer?");
-    if (res == true) {
-      this.setup();
-    } else {
-    }
-  }
-
-  /**
    * Récupérer les cellules voisines d'une cellule
    * @param {*} cell Cellule de référence
    * @returns Array<Cell> Tableau de cellules voisines
@@ -244,8 +233,24 @@ class DeminHex {
     let cells = this.getRemainings(this.aCells);
     if (cells.length == this.aCells.length - this.settings_MinesCount) {
       this.revealCells_Bomb(this.aCells);
-      alert("Vous avez gagné!");
+      setTimeout(this.gameWin.bind(this), this.iAlertDelay);
     }
+  }
+
+  /**
+   * Partie Gagnée
+   */
+  gameWin() {
+    alert("Vous avez gagné!");
+    this.setup();
+  }
+
+  /**
+   * Partie Terminée, demander à l'utilisateur s'il veut recommencer
+   */
+  gameOver() {
+    alert("Vous avez perdu!");
+    this.setup();
   }
 
   ////////////////////////////////////////////////////////////
@@ -325,7 +330,7 @@ class DeminHex {
     let cell = this.getCellFromId(sID);
     this.checkCellContent(cell);
     this.showRemainings();
-    setTimeout(this.checkIfWin.bind(this), this.iAlertDelay);
+    this.checkIfWin();
   }
 
   /**
