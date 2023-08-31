@@ -128,7 +128,7 @@ class DeminHex {
    * Partie Terminée, demander à l'utilisateur s'il veut recommencer
    */
   gameOver() {
-    var res = confirm("Game Over! Want to retry?");
+    var res = confirm("Vous avez perdu! Voulez-vous recommencer?");
     if (res == true) {
       this.setup();
     } else {
